@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "vite-plugin-elm": "^3.0.1"
+  }
+}
