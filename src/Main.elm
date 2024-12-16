@@ -51,7 +51,7 @@ init =  {
 view : Model -> Html msg
 view model =
     div []
-        [ h1 [] [ text "Lista de Elementos" ]
+        [ h1 [] [ text "Lista de asdada" ]
         , ul []
             (List.map viewItem model.items)
         ]
