@@ -1,6 +1,7 @@
 {
-  "devDependencies": {
-    "vite-plugin-elm": "^3.0.1",
-    "vite-plugin-elm-watch": "1.3.5"
-  }
+	"type": "module",
+	"devDependencies": {
+		"vite-plugin-elm": "^3.0.1",
+		"vite-plugin-elm-watch": "1.3.5"
+	}
 }
