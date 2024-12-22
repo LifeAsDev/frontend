@@ -1,4 +1,4 @@
-module Data.Product exposing (Image, Product, products)
+module Product.Product exposing (Image, Product, products)
 
 -- Tipo para la imagen
 

@@ -95,4 +95,52 @@ textarea {
 	height: 3em;
 	border: 1px solid var(--rose400);
 	gap: 0.35em;
+	cursor: pointer;
+}
+
+.addToCartBtn:hover:not(.highlight) {
+	border-color: var(--red);
+	color: var(--red);
+}
+
+.highlight {
+	background-color: var(--red);
+	color: white;
+	border: none;
+	justify-content: space-between;
+	padding: 0 1em;
+	cursor: initial;
+}
+
+.quantityBtn {
+	border: 2px solid white;
+	border-radius: 50%;
+	padding: 0.2em;
+	height: 0.75em;
+	width: 0.75em;
+	justify-content: center;
+	align-items: center;
+	display: flex;
+	cursor: pointer;
+}
+
+.quantityBtn:hover {
+	background-color: white;
+}
+
+.quantityBtn:hover path {
+	fill: var(--red);
+}
+
+.quantityText {
+	cursor: pointer;
+	height: 100%;
+	width: 4em;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.quantityText:hover {
+	font-size: 1.25em;
 }

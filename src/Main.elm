@@ -1,11 +1,13 @@
 module Main exposing (..)
 
 import Browser
-import Data.Product exposing (Image, Product, products)
-import Html exposing (Html, button, div, h1, img, li, main_, p, text, ul)
-import Html.Attributes exposing (alt, class, for, height, src, width)
+import Html exposing (Html, button, div, h1, img, li, main_, p, span, text, ul)
+import Html.Attributes exposing (alt, class, classList, for, height, src, width)
 import List.Extra exposing (getAt)
+import Product.Product exposing (Image, Product, products)
 import String exposing (fromFloat)
+import Svg exposing (svg)
+import Svg.Attributes exposing (d, fill, height, viewBox, width)
 
 
 
@@ -76,6 +78,7 @@ formatFloat number =
 type alias Model =
     { error : String
     , items : List Item
+    , productSelections : List Int
     }
 
 
@@ -83,6 +86,7 @@ init : Model
 init =
     { error = ""
     , items = []
+    , productSelections = List.repeat (List.length products) 1
     }
 
 
@@ -98,7 +102,7 @@ view model =
                 [ text "Desserts" ]
             , ul
                 [ class "productGrid" ]
-                (List.map viewProduct products)
+                (List.indexedMap (viewProduct model) products)
             ]
         , ul []
             (List.map viewItem model.items)
@@ -115,8 +119,8 @@ viewItem item =
             li [] [ text "Product not found" ]
 
 
-viewProduct : Product -> Html msg
-viewProduct product =
+viewProduct : Model -> Int -> Product -> Html msg
+viewProduct model index product =
     li [ class "productItem" ]
         [ img
             [ src product.image.desktop
@@ -129,13 +133,45 @@ viewProduct product =
             , p [ class "productName" ] [ text product.name ]
             , p [ class "productPrice" ] [ text ("$" ++ formatFloat product.price) ]
             ]
-        , button [ class "addToCartBtn" ]
+        , viewAddToCartBtn (List.Extra.getAt index model.productSelections |> Maybe.withDefault 0)
+        ]
+
+
+viewAddToCartBtn : Int -> Html msg
+viewAddToCartBtn quantity =
+    if quantity == 0 then
+        button [ class "addToCartBtn" ]
             [ img
                 [ src "/assets/images/icon-add-to-cart.svg"
-                , alt "add to cart"
+                , alt "check"
                 , class ""
                 ]
                 []
             , text "Add to Cart"
             ]
-        ]
+
+    else
+        button
+            [ classList
+                [ ( "addToCartBtn", True )
+                , ( "highlight", True )
+                ]
+            ]
+            [ div
+                [ alt "decrement"
+                , class "quantityBtn"
+                ]
+                [ svg [ Svg.Attributes.width "10", Svg.Attributes.height "2", Svg.Attributes.fill "none", Svg.Attributes.viewBox "0 0 10 2" ]
+                    [ Svg.path [ Svg.Attributes.fill "#fff", Svg.Attributes.d "M0 .375h10v1.25H0V.375Z" ] []
+                    ]
+                ]
+            , span [ class "quantityText" ] [ text (String.fromInt quantity) ]
+            , div
+                [ alt "increment"
+                , class "quantityBtn"
+                ]
+                [ svg [ Svg.Attributes.width "10", Svg.Attributes.height "10", Svg.Attributes.fill "none", Svg.Attributes.viewBox "0 0 10 10" ]
+                    [ Svg.path [ Svg.Attributes.fill "#fff", Svg.Attributes.d "M10 4.375H5.625V0h-1.25v4.375H0v1.25h4.375V10h1.25V5.625H10v-1.25Z" ] []
+                    ]
+                ]
+            ]
