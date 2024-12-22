@@ -3,6 +3,7 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, button, div, h1, img, li, main_, p, span, text, ul)
 import Html.Attributes exposing (alt, class, classList, for, height, src, width)
+import Html.Events exposing (onClick)
 import List.Extra exposing (getAt)
 import Product.Product exposing (Image, Product, products)
 import String exposing (fromFloat)
@@ -15,14 +16,29 @@ import Svg.Attributes exposing (d, fill, height, viewBox, width)
 
 
 type Msg
-    = NoOp
+    = Increment Int
+    | Decrement Int
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        NoOp ->
-            model
+        Increment productIndex ->
+            { model | productSelections = List.Extra.setAt productIndex (Maybe.map ((+) 1) (List.Extra.getAt productIndex model.productSelections) |> Maybe.withDefault 0) model.productSelections }
+
+        Decrement productIndex ->
+            let
+                currentQuantity =
+                    List.Extra.getAt productIndex model.productSelections |> Maybe.withDefault 0
+
+                newQuantity =
+                    if currentQuantity > 0 then
+                        currentQuantity - 1
+
+                    else
+                        0
+            in
+            { model | productSelections = List.Extra.setAt productIndex newQuantity model.productSelections }
 
 
 
@@ -86,7 +102,7 @@ init : Model
 init =
     { error = ""
     , items = []
-    , productSelections = List.repeat (List.length products) 1
+    , productSelections = List.repeat (List.length products) 0
     }
 
 
@@ -94,7 +110,7 @@ init =
 -- VIEW
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
     main_ [ class "container" ]
         [ div [ class "productBox" ]
@@ -119,13 +135,18 @@ viewItem item =
             li [] [ text "Product not found" ]
 
 
-viewProduct : Model -> Int -> Product -> Html msg
+viewProduct : Model -> Int -> Product -> Html Msg
 viewProduct model index product =
     li [ class "productItem" ]
         [ img
             [ src product.image.desktop
             , alt product.name
-            , class "productImg"
+            , classList
+                [ ( "productImg", True )
+                , ( "productImgHighlight"
+                  , (List.Extra.getAt index model.productSelections |> Maybe.withDefault 0) > 0
+                  )
+                ]
             ]
             []
         , div [ class "productMainBoxData" ]
@@ -133,14 +154,14 @@ viewProduct model index product =
             , p [ class "productName" ] [ text product.name ]
             , p [ class "productPrice" ] [ text ("$" ++ formatFloat product.price) ]
             ]
-        , viewAddToCartBtn (List.Extra.getAt index model.productSelections |> Maybe.withDefault 0)
+        , viewAddToCartBtn (List.Extra.getAt index model.productSelections |> Maybe.withDefault 0) index
         ]
 
 
-viewAddToCartBtn : Int -> Html msg
-viewAddToCartBtn quantity =
+viewAddToCartBtn : Int -> Int -> Html Msg
+viewAddToCartBtn quantity index =
     if quantity == 0 then
-        button [ class "addToCartBtn" ]
+        button [ onClick (Increment index), class "addToCartBtn" ]
             [ img
                 [ src "/assets/images/icon-add-to-cart.svg"
                 , alt "check"
@@ -158,7 +179,8 @@ viewAddToCartBtn quantity =
                 ]
             ]
             [ div
-                [ alt "decrement"
+                [ onClick (Decrement index)
+                , alt "decrement"
                 , class "quantityBtn"
                 ]
                 [ svg [ Svg.Attributes.width "10", Svg.Attributes.height "2", Svg.Attributes.fill "none", Svg.Attributes.viewBox "0 0 10 2" ]
@@ -167,7 +189,8 @@ viewAddToCartBtn quantity =
                 ]
             , span [ class "quantityText" ] [ text (String.fromInt quantity) ]
             , div
-                [ alt "increment"
+                [ onClick (Increment index)
+                , alt "increment"
                 , class "quantityBtn"
                 ]
                 [ svg [ Svg.Attributes.width "10", Svg.Attributes.height "10", Svg.Attributes.fill "none", Svg.Attributes.viewBox "0 0 10 10" ]

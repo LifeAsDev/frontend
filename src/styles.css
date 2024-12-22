@@ -48,7 +48,7 @@ textarea {
 .productItem {
 	display: flex;
 	flex-direction: column;
-	gap: 1.5em;
+	gap: 2.5em;
 	position: relative;
 }
 
@@ -82,7 +82,7 @@ textarea {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	bottom: 64px;
+	bottom: 80px;
 	background-color: white;
 	border: none;
 	font-size: 1em;
@@ -143,4 +143,8 @@ textarea {
 }
 .quantityText:hover {
 	font-size: 1.25em;
+}
+
+.productImgHighlight {
+	outline: 3px solid var(--red);
 }
