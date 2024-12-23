@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, h1, img, li, main_, p, span, text, ul)
+import Html exposing (Html, button, div, h1, h2, img, li, main_, p, span, text, ul)
 import Html.Attributes exposing (alt, class, classList, for, height, src, width)
 import Html.Events exposing (onClick)
 import List.Extra exposing (getAt)
@@ -18,6 +18,7 @@ import Svg.Attributes exposing (d, fill, height, viewBox, width)
 type Msg
     = Increment Int
     | Decrement Int
+    | RemoveItem Int
 
 
 update : Msg -> Model -> Model
@@ -39,6 +40,9 @@ update msg model =
                         0
             in
             { model | productSelections = List.Extra.setAt productIndex newQuantity model.productSelections }
+
+        RemoveItem itemId ->
+            { model | items = List.filter (\item -> item.id /= itemId) model.items }
 
 
 
@@ -101,7 +105,7 @@ type alias Model =
 init : Model
 init =
     { error = ""
-    , items = []
+    , items = [ { id = 0, quantity = 1 } ]
     , productSelections = List.repeat (List.length products) 0
     }
 
@@ -120,16 +124,34 @@ view model =
                 [ class "productGrid" ]
                 (List.indexedMap (viewProduct model) products)
             ]
-        , ul []
-            (List.map viewItem model.items)
+        , viewCart model
         ]
 
 
-viewItem : Item -> Html msg
+viewItem : Item -> Html Msg
 viewItem item =
     case getProductById item.id of
         Just product ->
-            li [] [ text product.name ]
+            li [ class "itemBox" ]
+                [ div
+                    [ class "itemBoxLeft" ]
+                    [ p [ class "itemName" ] [ text product.name ]
+                    , div [ class "iteminfo" ]
+                        [ p [ class "itemQuantity" ] [ text "1x" ]
+                        , p [ class "itemPrice" ] [ text ("@ $" ++ formatFloat product.price) ]
+                        , p [ class "allItemPrice" ] [ text ("$" ++ formatFloat (toFloat item.quantity * product.price)) ]
+                        ]
+                    ]
+                , div
+                    [ alt "remove"
+                    , class "removeBtn"
+                    , onClick (RemoveItem item.id)
+                    ]
+                    [ svg [ Svg.Attributes.width "10", Svg.Attributes.height "10", Svg.Attributes.fill "none", Svg.Attributes.viewBox "0 0 10 10" ]
+                        [ Svg.path [ Svg.Attributes.fill "#CAAFA7", Svg.Attributes.d "M8.375 9.375 5 6 1.625 9.375l-1-1L4 5 .625 1.625l1-1L5 4 8.375.625l1 1L6 5l3.375 3.375-1 1Z" ] []
+                        ]
+                    ]
+                ]
 
         Nothing ->
             li [] [ text "Product not found" ]
@@ -198,3 +220,12 @@ viewAddToCartBtn quantity index =
                     ]
                 ]
             ]
+
+
+viewCart : Model -> Html Msg
+viewCart model =
+    div [ class "cartBox" ]
+        [ h2 [] [ text "Your Cart (1)" ]
+        , ul [ class "cartList" ]
+            (List.map viewItem model.items)
+        ]

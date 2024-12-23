@@ -19,10 +19,21 @@
 
 body {
 	margin: 0;
+	background-color: var(--rose100);
+}
+
+h1 {
+	font-size: 2.75em;
+	color: var(--rose900);
+	margin-top: 0;
 }
 
 main {
 	margin: 4em;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	gap: 2.5em;
 }
 
 p {
@@ -147,4 +158,91 @@ textarea {
 
 .productImgHighlight {
 	outline: 3px solid var(--red);
+}
+
+.cartBox {
+	background-color: white;
+	border-radius: 6px;
+	min-height: 10em;
+	min-width: 10em;
+	flex-grow: 1;
+	height: fit-content;
+	padding: 1.75em 1.5em;
+}
+
+.cartBox h2 {
+	color: var(--red);
+	font-size: 1.6em;
+	margin: 0;
+}
+
+.cartList {
+	display: flex;
+	flex-direction: column;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	margin-top: 1.5em;
+}
+
+.itemBox {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	border-bottom: 3px solid var(--rose100);
+	padding-bottom: 1em;
+}
+
+.itemBoxLeft {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4em;
+}
+
+.iteminfo {
+	display: flex;
+	flex-direction: row;
+}
+
+.itemName {
+	font-weight: 600;
+	color: var(--rose900);
+}
+
+.itemQuantity {
+	color: var(--red);
+	font-weight: 600;
+	margin-right: 1.2em;
+}
+
+.itemPrice {
+	color: var(--rose400);
+	font-weight: 600;
+	margin-right: 0.5em;
+}
+
+.allItemPrice {
+	color: var(--rose500);
+	font-weight: 600;
+}
+
+.removeBtn {
+	border: 2px solid var(--rose300);
+	border-radius: 50%;
+	padding: 0.2em;
+	height: 0.75em;
+	width: 0.75em;
+	justify-content: center;
+	align-items: center;
+	display: flex;
+	cursor: pointer;
+	margin: auto 0;
+}
+
+.removeBtn:hover {
+	border-color: var(--rose900);
+}
+
+.removeBtn:hover path {
+	fill: var(--rose900);
 }
