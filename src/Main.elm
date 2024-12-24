@@ -19,6 +19,7 @@ type Msg
     = Increment Int
     | Decrement Int
     | RemoveItem Int
+    | AddItem Int Int
 
 
 update : Msg -> Model -> Model
@@ -43,6 +44,12 @@ update msg model =
 
         RemoveItem itemId ->
             { model | items = List.filter (\item -> item.id /= itemId) model.items }
+
+        AddItem productId quantity ->
+            { model
+                | items = addItem productId model.items quantity
+                , productSelections = List.Extra.setAt productId 0 model.productSelections
+            }
 
 
 
@@ -137,7 +144,7 @@ viewItem item =
                     [ class "itemBoxLeft" ]
                     [ p [ class "itemName" ] [ text product.name ]
                     , div [ class "iteminfo" ]
-                        [ p [ class "itemQuantity" ] [ text "1x" ]
+                        [ p [ class "itemQuantity" ] [ text (String.fromInt item.quantity ++ "x") ]
                         , p [ class "itemPrice" ] [ text ("@ $" ++ formatFloat product.price) ]
                         , p [ class "allItemPrice" ] [ text ("$" ++ formatFloat (toFloat item.quantity * product.price)) ]
                         ]
@@ -180,6 +187,27 @@ viewProduct model index product =
         ]
 
 
+addItem : Int -> List Item -> Int -> List Item
+addItem productId items quantity =
+    let
+        existingItem =
+            List.filter (\item -> item.id == productId) items
+    in
+    if List.isEmpty existingItem then
+        { id = productId, quantity = quantity } :: items
+
+    else
+        List.map
+            (\item ->
+                if item.id == productId then
+                    { item | quantity = item.quantity + quantity }
+
+                else
+                    item
+            )
+            items
+
+
 viewAddToCartBtn : Int -> Int -> Html Msg
 viewAddToCartBtn quantity index =
     if quantity == 0 then
@@ -209,7 +237,7 @@ viewAddToCartBtn quantity index =
                     [ Svg.path [ Svg.Attributes.fill "#fff", Svg.Attributes.d "M0 .375h10v1.25H0V.375Z" ] []
                     ]
                 ]
-            , span [ class "quantityText" ] [ text (String.fromInt quantity) ]
+            , span [ class "quantityText", onClick (AddItem index quantity) ] [ text (String.fromInt quantity) ]
             , div
                 [ onClick (Increment index)
                 , alt "increment"
