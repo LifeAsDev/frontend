@@ -66,9 +66,19 @@ type alias Item =
     }
 
 
-getProductById : Int -> Maybe Product
+defaultProduct : Product
+defaultProduct =
+    { name = "Unknown Product"
+    , price = 0.0
+    , image = { desktop = "", mobile = "", thumbnail = "", tablet = "" }
+    , category = "Unknown"
+    }
+
+
+getProductById : Int -> Product
 getProductById id =
     List.Extra.getAt id products
+        |> Maybe.withDefault defaultProduct
 
 
 formatFloat : Float -> String
@@ -138,7 +148,7 @@ view model =
 viewItem : Item -> Html Msg
 viewItem item =
     case getProductById item.id of
-        Just product ->
+        product ->
             li [ class "itemBox" ]
                 [ div
                     [ class "itemBoxLeft" ]
@@ -159,9 +169,6 @@ viewItem item =
                         ]
                     ]
                 ]
-
-        Nothing ->
-            li [] [ text "Product not found" ]
 
 
 viewProduct : Model -> Int -> Product -> Html Msg
@@ -253,7 +260,30 @@ viewAddToCartBtn quantity index =
 viewCart : Model -> Html Msg
 viewCart model =
     div [ class "cartBox" ]
-        [ h2 [] [ text "Your Cart (1)" ]
+        [ h2 [] [ text ("Your Cart (" ++ String.fromInt (List.foldl (\item acc -> acc + item.quantity) 0 model.items) ++ ")") ]
         , ul [ class "cartList" ]
             (List.map viewItem model.items)
+        , div [ class "orderTotal" ]
+            [ p [] [ text "Order Total" ]
+            , p []
+                [ text
+                    ("$"
+                        ++ formatFloat
+                            (List.foldl
+                                (\item acc ->
+                                    let
+                                        product =
+                                            getProductById item.id
+
+                                        productPrice =
+                                            product.price
+                                    in
+                                    acc + (productPrice * toFloat item.quantity)
+                                )
+                                0
+                                model.items
+                            )
+                    )
+                ]
+            ]
         ]

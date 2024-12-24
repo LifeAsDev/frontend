@@ -191,6 +191,7 @@ textarea {
 	justify-content: space-between;
 	border-bottom: 3px solid var(--rose100);
 	padding-bottom: 1em;
+	margin-bottom: 1em;
 }
 
 .itemBoxLeft {
@@ -245,4 +246,22 @@ textarea {
 
 .removeBtn:hover path {
 	fill: var(--rose900);
+}
+
+.orderTotal {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-top: 0.5em;
+	align-items: center;
+}
+
+.orderTotal p:nth-of-type(1) {
+	font-weight: 400;
+}
+
+.orderTotal p:nth-of-type(2) {
+	font-weight: 700;
+	font-size: 1.75em;
+	color: var(--rose900);
 }
