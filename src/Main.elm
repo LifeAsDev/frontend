@@ -286,4 +286,15 @@ viewCart model =
                     )
                 ]
             ]
+        , div [ class "carbonNeutral" ]
+            [ img
+                [ src "/assets/images/icon-carbon-neutral.svg"
+                , alt "carbon neutral"
+                , class ""
+                ]
+                []
+            , p [] [ text "This is a" ]
+            , p [ class "bold" ] [ text "carbon-neutral" ]
+            , p [] [ text "delivery" ]
+            ]
         ]

@@ -265,3 +265,19 @@ textarea {
 	font-size: 1.75em;
 	color: var(--rose900);
 }
+
+.bold {
+	font-weight: 600;
+}
+
+.carbonNeutral {
+	background-color: var(--rose100);
+	display: flex;
+	flex-direction: row;
+	border-radius: 6px;
+	align-items: center;
+	justify-content: center;
+	padding: 1em 0;
+	margin-top: 1.5em;
+	gap: 0.25em;
+}
