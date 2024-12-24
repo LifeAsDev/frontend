@@ -297,4 +297,5 @@ viewCart model =
             , p [ class "bold" ] [ text "carbon-neutral" ]
             , p [] [ text "delivery" ]
             ]
+        , button [ class "confirmOrder" ] [ text "Confirm Order" ]
         ]

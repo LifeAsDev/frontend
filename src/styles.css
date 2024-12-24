@@ -7,6 +7,7 @@
 
 :root {
 	--red: hsl(14, 86%, 42%);
+	--red2: hsl(14, 88%, 29%);
 	--green: hsl(159, 69%, 38%);
 	--rose50: hsl(20, 50%, 98%);
 	--rose100: hsl(13, 31%, 94%);
@@ -280,4 +281,24 @@ textarea {
 	padding: 1em 0;
 	margin-top: 1.5em;
 	gap: 0.25em;
+}
+
+.confirmOrder {
+	background-color: var(--red);
+	color: white;
+	border: none;
+	font-size: 1em;
+	font-weight: 600;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	border-radius: 48px;
+	padding: 1em 0;
+	cursor: pointer;
+	margin-top: 1.5em;
+}
+
+.confirmOrder:hover {
+	background-color: var(--red2);
 }
