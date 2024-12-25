@@ -259,43 +259,63 @@ viewAddToCartBtn quantity index =
 
 viewCart : Model -> Html Msg
 viewCart model =
-    div [ class "cartBox" ]
-        [ h2 [] [ text ("Your Cart (" ++ String.fromInt (List.foldl (\item acc -> acc + item.quantity) 0 model.items) ++ ")") ]
-        , ul [ class "cartList" ]
-            (List.map viewItem model.items)
-        , div [ class "orderTotal" ]
-            [ p [] [ text "Order Total" ]
-            , p []
-                [ text
-                    ("$"
-                        ++ formatFloat
-                            (List.foldl
-                                (\item acc ->
-                                    let
-                                        product =
-                                            getProductById item.id
+    if List.isEmpty model.items then
+        div [ class "cartBox" ]
+            [ h2 [] [ text ("Your Cart (" ++ String.fromInt (List.foldl (\item acc -> acc + item.quantity) 0 model.items) ++ ")") ]
+            , viewNoItemsOnCart model
+            ]
 
-                                        productPrice =
-                                            product.price
-                                    in
-                                    acc + (productPrice * toFloat item.quantity)
+    else
+        div [ class "cartBox" ]
+            [ h2 [] [ text ("Your Cart (" ++ String.fromInt (List.foldl (\item acc -> acc + item.quantity) 0 model.items) ++ ")") ]
+            , ul [ class "cartList" ]
+                (List.map viewItem model.items)
+            , div [ class "orderTotal" ]
+                [ p [] [ text "Order Total" ]
+                , p []
+                    [ text
+                        ("$"
+                            ++ formatFloat
+                                (List.foldl
+                                    (\item acc ->
+                                        let
+                                            product =
+                                                getProductById item.id
+
+                                            productPrice =
+                                                product.price
+                                        in
+                                        acc + (productPrice * toFloat item.quantity)
+                                    )
+                                    0
+                                    model.items
                                 )
-                                0
-                                model.items
-                            )
-                    )
+                        )
+                    ]
                 ]
-            ]
-        , div [ class "carbonNeutral" ]
-            [ img
-                [ src "/assets/images/icon-carbon-neutral.svg"
-                , alt "carbon neutral"
-                , class ""
+            , div [ class "carbonNeutral" ]
+                [ img
+                    [ src "/assets/images/icon-carbon-neutral.svg"
+                    , alt "carbon neutral"
+                    , class ""
+                    ]
+                    []
+                , p [] [ text "This is a" ]
+                , p [ class "bold" ] [ text "carbon-neutral" ]
+                , p [] [ text "delivery" ]
                 ]
-                []
-            , p [] [ text "This is a" ]
-            , p [ class "bold" ] [ text "carbon-neutral" ]
-            , p [] [ text "delivery" ]
+            , button [ class "confirmOrder" ] [ text "Confirm Order" ]
             ]
-        , button [ class "confirmOrder" ] [ text "Confirm Order" ]
+
+
+viewNoItemsOnCart : Model -> Html Msg
+viewNoItemsOnCart model =
+    div [ class "noItemsOnCartBox" ]
+        [ img
+            [ src "/assets/images/illustration-empty-cart.svg"
+            , alt "empty cart"
+            , class ""
+            ]
+            []
+        , text "Your added items will appear here"
         ]
