@@ -17,7 +17,11 @@
 	--rose900: hsl(14, 65%, 9%);
 	font-family: "redhat";
 }
-
+@media (max-width: 1366px) {
+	body {
+		font-size: 14px;
+	}
+}
 body {
 	margin: 0;
 	background-color: var(--rose100);
@@ -50,7 +54,7 @@ textarea {
 
 .productGrid {
 	display: grid;
-	grid-template-columns: repeat(3, 280px);
+	grid-template-columns: repeat(3, 17.5em);
 	padding: 0;
 	list-style: none;
 	row-gap: 2em;
@@ -316,4 +320,69 @@ textarea {
 
 .noItemsOnCartBox img {
 	width: 10em;
+}
+
+.overlay {
+	background-color: rgba(0, 0, 0, 0.6);
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.confirmationMenu {
+	background-color: white;
+	padding: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	text-align: left;
+	z-index: 1000;
+	min-width: 30em;
+}
+
+.confirmationMenu h2 {
+	margin-bottom: 10px;
+	color: var(--rose900);
+	font-size: 2em;
+	font-weight: 700;
+	margin-top: 0.5em;
+}
+
+.confirmationMenu h3 {
+	font-size: 1em;
+	font-weight: 400;
+	color: var(--rose500);
+	margin-top: 0;
+}
+.confirmCartList {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--rose100);
+	border-radius: 6px;
+	padding: 1.5em;
+	margin-top: 1.5em;
+	gap: 0.25em;
+}
+
+.confirmCartList .itemBox {
+	align-items: center;
+	border-color: rgba(0, 0, 0, 0.1);
+	border-width: 2px;
+	justify-content: flex-start;
+}
+
+.confirmCartList .allItemPrice {
+	color: var(--rose900);
+	align-items: center;
+	margin-left: auto;
+}
+
+.confirmCartList img {
+	width: 3.5em;
+	border-radius: 6px;
+	margin-right: 1em;
 }

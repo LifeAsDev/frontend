@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, h1, h2, img, li, main_, p, span, text, ul)
+import Html exposing (Html, button, div, h1, h2, h3, img, li, main_, p, span, text, ul)
 import Html.Attributes exposing (alt, class, classList, for, height, src, width)
 import Html.Events exposing (onClick)
 import List.Extra exposing (getAt)
@@ -20,6 +20,7 @@ type Msg
     | Decrement Int
     | RemoveItem Int
     | AddItem Int Int
+    | ConfirmOrder
 
 
 update : Msg -> Model -> Model
@@ -50,6 +51,14 @@ update msg model =
                 | items = addItem productId model.items quantity
                 , productSelections = List.Extra.setAt productId 0 model.productSelections
             }
+
+        ConfirmOrder ->
+            case model.confirmationMenu of
+                True ->
+                    { model | items = [], confirmationMenu = False }
+
+                False ->
+                    { model | confirmationMenu = True }
 
 
 
@@ -116,6 +125,7 @@ type alias Model =
     { error : String
     , items : List Item
     , productSelections : List Int
+    , confirmationMenu : Bool
     }
 
 
@@ -124,6 +134,7 @@ init =
     { error = ""
     , items = [ { id = 0, quantity = 1 } ]
     , productSelections = List.repeat (List.length products) 0
+    , confirmationMenu = False
     }
 
 
@@ -142,6 +153,7 @@ view model =
                 (List.indexedMap (viewProduct model) products)
             ]
         , viewCart model
+        , viewConfirmationMenu model
         ]
 
 
@@ -304,7 +316,7 @@ viewCart model =
                 , p [ class "bold" ] [ text "carbon-neutral" ]
                 , p [] [ text "delivery" ]
                 ]
-            , button [ class "confirmOrder" ] [ text "Confirm Order" ]
+            , button [ class "confirmOrder", onClick ConfirmOrder ] [ text "Confirm Order" ]
             ]
 
 
@@ -319,3 +331,73 @@ viewNoItemsOnCart model =
             []
         , text "Your added items will appear here"
         ]
+
+
+viewConfirmationMenu : Model -> Html Msg
+viewConfirmationMenu model =
+    if model.confirmationMenu then
+        div [ class "overlay" ]
+            [ div [ class "confirmationMenu" ]
+                [ img
+                    [ src "/assets/images/icon-order-confirmed.svg"
+                    , alt "order confirmed"
+                    , class ""
+                    ]
+                    []
+                , h2 [] [ text "Order Confirmed" ]
+                , h3 [] [ text "We hope you enjoy your food!" ]
+                , div [ class "confirmCartList" ]
+                    [ div [ class "" ]
+                        (List.map viewConfirmItem model.items)
+                    , div [ class "orderTotal" ]
+                        [ p [] [ text "Order Total" ]
+                        , p []
+                            [ text
+                                ("$"
+                                    ++ formatFloat
+                                        (List.foldl
+                                            (\item acc ->
+                                                let
+                                                    product =
+                                                        getProductById item.id
+
+                                                    productPrice =
+                                                        product.price
+                                                in
+                                                acc + (productPrice * toFloat item.quantity)
+                                            )
+                                            0
+                                            model.items
+                                        )
+                                )
+                            ]
+                        ]
+                    ]
+                , button [ class "confirmOrder", onClick ConfirmOrder ] [ text "Start New Order" ]
+                ]
+            ]
+
+    else
+        text ""
+
+
+viewConfirmItem : Item -> Html Msg
+viewConfirmItem item =
+    case getProductById item.id of
+        product ->
+            li [ class "itemBox" ]
+                [ img
+                    [ src product.image.thumbnail
+                    , alt product.name
+                    ]
+                    []
+                , div
+                    [ class "itemBoxLeft" ]
+                    [ p [ class "itemName" ] [ text product.name ]
+                    , div [ class "iteminfo" ]
+                        [ p [ class "itemQuantity" ] [ text (String.fromInt item.quantity ++ "x") ]
+                        , p [ class "itemPrice" ] [ text ("@ $" ++ formatFloat product.price) ]
+                        ]
+                    ]
+                , p [ class "allItemPrice" ] [ text ("$" ++ formatFloat (toFloat item.quantity * product.price)) ]
+                ]
