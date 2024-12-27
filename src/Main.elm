@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Dom
 import Browser.Events exposing (onResize)
 import Html exposing (Html, button, div, h1, h2, h3, img, li, main_, p, span, text, ul)
 import Html.Attributes exposing (alt, class, classList, for, height, src, width)
@@ -10,6 +11,7 @@ import Product.Product exposing (Image, Product, products)
 import String exposing (fromFloat)
 import Svg exposing (svg)
 import Svg.Attributes exposing (d, fill, height, viewBox, width)
+import Task
 
 
 
@@ -22,7 +24,8 @@ type Msg
     | RemoveItem Int
     | AddItem Int Int
     | ConfirmOrder
-    | WindowResized Int Int
+    | WindowResized Int
+    | WindowInitialized Browser.Dom.Viewport
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -63,8 +66,11 @@ update msg model =
             else
                 ( { model | confirmationMenu = True }, Cmd.none )
 
-        WindowResized newWidth _ ->
+        WindowResized newWidth ->
             ( { model | windowWidth = newWidth }, Cmd.none )
+
+        WindowInitialized viewport ->
+            ( { model | windowWidth = Basics.round viewport.viewport.width }, Cmd.none )
 
 
 
@@ -74,9 +80,9 @@ update msg model =
 main : Program () Model Msg
 main =
     Browser.element
-        { init = \_ -> ( init, Cmd.none )
+        { init = \_ -> ( init, Task.perform WindowInitialized Browser.Dom.getViewport )
         , update = update
-        , subscriptions = \_ -> Browser.Events.onResize WindowResized
+        , subscriptions = subscriptions
         , view = view
         }
 
@@ -85,6 +91,15 @@ type alias Item =
     { id : Int
     , quantity : Int
     }
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Browser.Events.onResize (\w h -> WindowResized w)
 
 
 defaultProduct : Product
