@@ -54,7 +54,7 @@ textarea {
 
 .productGrid {
 	display: grid;
-	grid-template-columns: repeat(3, 17.5em);
+	grid-template-columns: repeat(3, minmax(8em, 17.5em));
 	padding: 0;
 	list-style: none;
 	row-gap: 2em;
@@ -169,7 +169,7 @@ textarea {
 	background-color: white;
 	border-radius: 6px;
 	min-height: 10em;
-	min-width: 10em;
+	min-width: 20em;
 	flex-grow: 1;
 	height: fit-content;
 	padding: 1.75em 1.5em;
@@ -282,9 +282,10 @@ textarea {
 	border-radius: 6px;
 	align-items: center;
 	justify-content: center;
-	padding: 1em 0;
+	padding: 1em 0.2em;
 	margin-top: 1.5em;
 	gap: 0.25em;
+	text-wrap: nowrap;
 }
 
 .confirmOrder {
@@ -385,4 +386,55 @@ textarea {
 	width: 3.5em;
 	border-radius: 6px;
 	margin-right: 1em;
+}
+
+@media (max-width: 960px) {
+	.productGrid {
+		grid-template-columns: repeat(2, minmax(8em, 17.5em));
+	}
+}
+@media (max-width: 790px) {
+	.productGrid {
+		grid-template-columns: repeat(1, minmax(8em, 17.5em));
+	}
+}
+@media (max-width: 632px) {
+	.productGrid {
+		display: flex;
+		flex-direction: column;
+	}
+	.container {
+		flex-direction: column;
+	}
+	body {
+		font-size: 16px !important;
+	}
+	main {
+		margin: 1em;
+	}
+	h1 {
+		font-size: 2em;
+	}
+	.cartBox {
+		min-width: 0;
+	}
+	.confirmationMenu {
+		min-width: 0;
+	}
+	.itemBoxLeft {
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+	.itemName {
+		text-overflow: ellipsis;
+		text-wrap: nowrap;
+		overflow: hidden;
+	}
+	.allItemPrice {
+		padding-left: 1em;
+	}
+	.confirmCartList {
+		max-height: 10em;
+		overflow: auto;
+	}
 }

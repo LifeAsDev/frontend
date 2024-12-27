@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Events exposing (onResize)
 import Html exposing (Html, button, div, h1, h2, h3, img, li, main_, p, span, text, ul)
 import Html.Attributes exposing (alt, class, classList, for, height, src, width)
 import Html.Events exposing (onClick)
@@ -21,13 +22,14 @@ type Msg
     | RemoveItem Int
     | AddItem Int Int
     | ConfirmOrder
+    | WindowResized Int Int
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Increment productIndex ->
-            { model | productSelections = List.Extra.setAt productIndex (Maybe.map ((+) 1) (List.Extra.getAt productIndex model.productSelections) |> Maybe.withDefault 0) model.productSelections }
+            ( { model | productSelections = List.Extra.setAt productIndex (Maybe.map ((+) 1) (List.Extra.getAt productIndex model.productSelections) |> Maybe.withDefault 0) model.productSelections }, Cmd.none )
 
         Decrement productIndex ->
             let
@@ -41,32 +43,42 @@ update msg model =
                     else
                         0
             in
-            { model | productSelections = List.Extra.setAt productIndex newQuantity model.productSelections }
+            ( { model | productSelections = List.Extra.setAt productIndex newQuantity model.productSelections }, Cmd.none )
 
         RemoveItem itemId ->
-            { model | items = List.filter (\item -> item.id /= itemId) model.items }
+            ( { model | items = List.filter (\item -> item.id /= itemId) model.items }, Cmd.none )
 
         AddItem productId quantity ->
-            { model
+            ( { model
                 | items = addItem productId model.items quantity
                 , productSelections = List.Extra.setAt productId 0 model.productSelections
-            }
+              }
+            , Cmd.none
+            )
 
         ConfirmOrder ->
-            case model.confirmationMenu of
-                True ->
-                    { model | items = [], confirmationMenu = False }
+            if model.confirmationMenu == True then
+                ( { model | items = [], confirmationMenu = False }, Cmd.none )
 
-                False ->
-                    { model | confirmationMenu = True }
+            else
+                ( { model | confirmationMenu = True }, Cmd.none )
+
+        WindowResized newWidth _ ->
+            ( { model | windowWidth = newWidth }, Cmd.none )
 
 
 
 -- MAIN
 
 
+main : Program () Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = \_ -> ( init, Cmd.none )
+        , update = update
+        , subscriptions = \_ -> Browser.Events.onResize WindowResized
+        , view = view
+        }
 
 
 type alias Item =
@@ -126,6 +138,7 @@ type alias Model =
     , items : List Item
     , productSelections : List Int
     , confirmationMenu : Bool
+    , windowWidth : Int
     }
 
 
@@ -135,6 +148,7 @@ init =
     , items = [ { id = 0, quantity = 1 } ]
     , productSelections = List.repeat (List.length products) 0
     , confirmationMenu = False
+    , windowWidth = 0
     }
 
 
@@ -187,7 +201,16 @@ viewProduct : Model -> Int -> Product -> Html Msg
 viewProduct model index product =
     li [ class "productItem" ]
         [ img
-            [ src product.image.desktop
+            [ src
+                (if model.windowWidth > 768 then
+                    product.image.desktop
+
+                 else if model.windowWidth > 480 then
+                    product.image.tablet
+
+                 else
+                    product.image.mobile
+                )
             , alt product.name
             , classList
                 [ ( "productImg", True )
