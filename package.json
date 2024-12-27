@@ -1,4 +1,11 @@
 {
+	"name": "product-list-with-cart-main",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"serve": "vite preview"
+	},
 	"type": "module",
 	"devDependencies": {
 		"vite-plugin-elm": "^3.0.1",
